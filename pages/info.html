@@ -1,0 +1,347 @@
+<div id="info">
+	<div class="optionDiv">
+		<select name="selected" id="">
+			
+		</select>
+		<button class="btn btn-success btn-sm xinzen">新增</button>
+		<button class="btn btn-success btn-sm piliang">批量删除</button>
+
+	</div>
+	<table class="table table-bordered text-center">
+		<tr>
+			<td>编号</td>
+			<td>栏目标题</td>
+			<td>所属栏目</td>
+			<td>列表样式</td>
+			<td>作者</td>
+			<td>发布时间</td>
+			<td>阅读次数</td>
+			<td>操作</td>
+		</tr>
+		
+	</table>
+	<!-- 模态框 -->
+	<div class="modal" id="infoModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header text-center">
+					<div class="backDiv">
+						<i class="iconfont icon-zuo"></i>
+						<span>返回</span>
+					</div>
+					<div class="modal-title">
+						<span>添加资讯</span>
+					</div>
+				</div>
+				<div class="modal-body">
+					<form action="" class="form">
+						<div class="form-group">
+							<label for="">标题</label>
+							<input type="text" class="form-control" name="infoTitle">
+						</div>
+						<div class="form-group">
+							<label for="">所属栏目</label>
+							<select name="lanmu" id="" class="form-control" ></select>
+						</div>
+						<div class="form-group">
+							<label for="">列表样式</label>
+							<div class="radio">
+								<label for="style-one">
+									<input type="radio" name="infolist" value="style-one" id="style-one">
+									<img src="./images/1.jpg" alt="">
+								</label>
+								<label for="style-two">
+									<input type="radio" name="infolist" value="style-two" id="style-two">
+									<img src="./images/2.jpg" alt="">
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							
+						</div>
+						<div class="form-group">
+							<label for="">正文</label>
+							<textarea name="infoContent" id="" cols="30" rows="6" class="form-control"></textarea>
+						</div>
+						<div class="form-group hide">
+							<button type="reset">重置</button>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<span class="meaasgeSpan"></span>
+					<button class="btn btn-success btn-sm saveBtn">发布</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	#info{
+		padding: 10px;
+		background-color: #fff;
+	}
+	#info .optionDiv{
+		overflow: hidden;
+	}
+	#info .optionDiv *{
+		float: left;
+		margin-right: 10px;
+	}
+	#info .optionDiv select{
+		width: 200px;
+		height: 30px;
+	}
+	#info table{
+		margin-top: 10px;
+	}
+	#info table i{
+		cursor: pointer;
+		color: #66bb0d;
+	}
+	#info table i:nth-child(2){
+		
+		color: red;
+	}
+	.modal{
+		background-color: rgba(0,0,0,0.2);
+	}
+	.modal-dialog{
+		width: 600px;
+		margin-top: 0;
+		margin-right: 0;
+	}
+	.backDiv{
+		float: left;
+		cursor: pointer;
+	}
+	.messageSpan{
+		color: red;
+	}
+	.modal img{
+		width: 240px;
+		height: 100px;
+	}
+	.modal-footer{
+		position: relative;
+		top: -30px;
+	}
+</style>
+<script>
+	//全局的栏目id
+	var categoryId='';
+	//通过栏目id查找的文章
+	var articles=[];
+	//全局的正在修改的文章对象
+	var article={};
+	//记录当前是新增还是修改
+	var option='新增';
+	addOption();
+	$('.modal-content').height($(window).height());
+	//给select追加option
+	function addOption(){
+		$('select[name=selected]').empty();
+		$.get(baseURL+'/manager/category/findAllCategory',function(res){
+		res.data.forEach(function(item){
+			var $option=$('<option value="'+item.id+'">'+item.name+'</option>');
+			$('select[name=selected]').append($option);
+		});
+		categoryId=$('select[name=selected]').val();
+		loadData(categoryId);
+		
+	})
+	}
+	//新增，修改时给select追加option
+	function xinzenaddOption(lanmuzhi){
+		//加载数据，查找栏目，追加节点，设置栏目值，显示模态框
+		$('select[name=lanmu]').empty();
+		$.get(baseURL+'/manager/category/findAllCategory',function(res){
+		res.data.forEach(function(item){
+			var $option=$('<option value="'+item.id+'">'+item.name+'</option>');
+			$('select[name=lanmu]').append($option);
+		});
+		//设置值
+		$('select[name=lanmu]').val(lanmuzhi);
+		$('.modal').show();
+		
+	})
+	}
+	//改变select的值时，拿到categoryId的值(select中的id)
+	$('select[name=selected]').change(function(){
+		categoryId=$('select[name=selected]').val();
+		loadData(categoryId);
+
+	})
+	//给table追加数据
+	//categoryId是从select中拿到的id
+	
+	
+	function loadData(Id){
+		$('#info table tr:not(:first)').remove();
+		var obj={
+		page:0,
+		pageSize:1000,
+		categoryId:Id,
+	};
+	// console.log(Id,'====================================');
+	$.get(baseURL+'/manager/article/findArticle',obj,function(res){
+		if (res.status==200) {
+			//遍历数组
+			articles = res.data.list;
+			articles.forEach(function(item){
+				var $tr=$(`<tr>
+					<td><input type="checkbox" value="`+item.id+`" /></td>
+					<td>`+item.title+`</td>
+					<td>`+item.category.name+`</td>
+					<td>`+item.liststyle+`</td>
+					<td>`+(item.author?item.author:'--')+`</td>
+					<td>`+item.publishtime+`</td>
+					<td>`+item.readtimes+`</td>
+					<td>
+						<i class="iconfont icon-edit-1-copy" title="修改"></i>
+						<i class="iconfont icon-shanchu" title="删除"></i>
+					</td>
+		</tr>`);
+				$('#info table').append($tr);
+			})
+		
+		}else{
+			alert('数据加载失败');
+			console.log(res.message);
+		}
+	})
+	}
+	//新增
+	$('.xinzen').click(function(){
+		option="新增";
+		$('.messageSpan').html('');
+		$('button[type=reset]').trigger('click');
+		xinzenaddOption(categoryId);
+	})
+	//返回
+	$('.backDiv').click(function(){
+		$('.modal').hide();
+	})
+	//保存
+	$('.saveBtn').click(function(){
+
+		//获取用户的数据，表单验证，不通过则提示用户，若通过，保存，关闭模态框，刷新数据
+		var infoTitle=$('input[name=infoTitle]').val();
+		var infoCategory=$('select[name=lanmu]').val();
+		var infoContent=$('textarea[name=infoContent]').val();
+		var infolist = $('input[name=infolist]:checked').val();
+		var publishtime =parseDate();
+		if (infoTitle&&infoCategory&&infoContent&&infolist) {
+			//保存
+
+			var obj={
+				title:infoTitle,
+				liststyle:infolist,
+				categoryId:infoCategory,
+	 			content:infoContent,
+	 			
+			};
+
+			if(option=="修改"){
+ 				
+				obj.id =article.id;	
+				obj.publishtime=publishtime;
+				obj.readtimes=article.readtimes;
+			}
+			
+			$.post(baseURL+'/manager/article/saveOrUpdateArticle',obj,function(res){
+				if (res.status==200) {
+					alert('保存或修改成功');
+					$('.modal').hide();
+					loadData(categoryId);
+				}else{
+					alert('保存或修改失败');
+					console.log(res.message);
+				}
+			})
+		}else{
+			$('.messageSpan').html('请输入完整信息');
+		}
+
+	})
+	// //修改
+	$('#info table').on({
+		click:function(){
+			option="修改";
+			//获取当前修改对象的id，获取对应的文章对象，设置模态框中的值，显示模态框
+			var currentAId=$(this).closest('tr').find('input[type=checkbox]').val();
+		    article = articles.filter(function(item){
+				return item.id == currentAId;
+			})[0];		   
+			//设置值
+			$('input[name=infoTitle]').val(article.title);
+			$('textarea[name=infoContent]').val(article.content);
+			//设置列表样式，清空所有的选择，通过value来选择radio
+			//prop属性设置，false是不选中状态,true是选中状态
+			$('input[name=infolist]').prop('checked',false);
+			$('input[value='+article.liststyle+']').prop('checked',true);
+			//设置所属栏目,参数是文章所属栏目的id
+			categoryId=article.category.id;
+			xinzenaddOption(categoryId);
+		}
+	},'i[title="修改"]')
+	//删除
+	$('#info table').on({
+		click:function(){
+			//获取要删除的文章id
+			
+			var id = $(this).closest('tr').find('input[type=checkbox]').val();
+			var obj={
+				id:id,
+			};
+			$.get(baseURL+'/manager/article/deleteArticleById',obj,function(res){
+				if (res.status==200) {
+					alert('删除成功');
+					loadData(categoryId);
+				}
+				else{
+					alert('删除失败');
+					console.log(res.message);
+				}
+			})
+		}
+	},'i[title="删除"]')
+	//批量删除
+	$('.piliang').click(function(){
+		//获取要删除的ids
+		var ids = $('input[type=checkbox]:checked').map(function(index,item){
+			return $(item).val();
+		}).toArray();
+		var obj={
+			ids:ids.toString(),
+			// ids:ids.join(&),
+		};
+		$.post(baseURL+'/manager/article/batchDeleteArticle',obj,function(res){
+				if (res.status==200) {
+					alert('批量删除成功');
+					loadData(categoryId);
+				}
+				else{
+					alert('批量删除失败');
+					console.log(res.message);
+				}
+		})
+	})
+	//封装时间
+	function parseDate(){
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var seconds = date.getSeconds();
+			return year+'-'+addZero(month)+'-'+addZero(day)+' '+addZero(hours)+':'+addZero(minutes)+':'+addZero(seconds);
+	}
+	function addZero(num){
+		return num<10?'0'+num:num;
+	}
+
+	
+</script>

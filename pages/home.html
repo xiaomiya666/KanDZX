@@ -1,0 +1,268 @@
+<div id="home">
+	<div class="outerDiv">
+		<div class="row">
+		<div class="col-sm-3">
+			<div class="totalDiv bg-white">
+				<div class="iconDiv bg-green">
+					<i class="iconfont icon-yun "></i>
+				</div>
+				<div class="numDiv">
+					<span>99.9%</span>
+					<small>DSDGFGJTHM</small>
+				</div>
+			</div>
+			<div class="totalDiv bg-white">
+				<div class="iconDiv bg-zi">
+					<i class="iconfont icon-user "></i>
+				</div>
+				<div class="numDiv">
+					<span>117k</span>
+					<small>DSDGFGJTHM</small>
+				</div>
+			</div>
+			<div class="totalDiv bg-white">
+				<div class="iconDiv bg-blue">
+					<i class="iconfont icon-18 "></i>
+				</div>
+				<div class="numDiv">
+					<span>2,470</span>
+					<small>DSDGFGJTHM</small>
+				</div>
+			</div>
+		</div>
+	    <div class="col-sm-6">
+	    	<div class="visDiv">
+	    		<div id="visContainer"></div>
+	    		<div class="numDiv">
+	    			<span>14.85%</span>
+	    			<small>MORE Visitors</small>
+	    		</div>
+	    	</div>
+	    </div>
+	    <div class="col-sm-3">
+	    	<div class="uptimeDiv">
+	    		<div id="uptimeContainer"></div>
+	    		<div class="numDiv">
+	    			<span>95.8%</span>
+					<small>DSDGFGJTHM</small>
+	    		</div>
+	    	</div>
+	    	<div class="salesDiv">
+	    		<div id="salesContainer"></div>
+	    		<div class="numDiv">
+	    			<span>320,45</span>
+					<small>DSDGFGJTHM</small>
+	    		</div>    		
+	    	</div>
+	    </div>
+	</div>
+	<div class="footer">
+	<img src="./images/3.png" alt="">
+	</div>
+	</div>
+	
+	
+
+</div>
+<script>
+
+	$(function(){
+		drawVis();
+		function drawVis(){
+			var chart = Highcharts.chart('visContainer', {
+				
+				chart:{
+					margin:[0,0,0,0],
+				},
+				credits:{
+					enabled:false,
+				},
+				colors:['#66bb0d','#ccc'],
+				title: {
+					text: ''
+				},
+				xAxis: {
+					visible:false,
+				},
+				yAxis: {
+					visible:false,
+					title: {
+						text: ''
+					}
+				},
+				legend: {
+					floating:true,
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'top'
+				},
+				plotOptions: {
+					series: {
+						label: {
+							connectorAllowed: false
+						},
+						pointStart: 2010
+					}
+				},
+				series: [{
+					name: 'page',
+					data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+				}, {
+					name: 'Visitors',
+					data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+				}]
+			});
+		}
+		drawup();
+		function drawup(){
+        	var chart = Highcharts.chart('uptimeContainer', {
+        	title: {
+        		text: ''
+        	},
+        	xAxis: {
+        		visible:false,
+        	},
+        	yAxis: {
+        		visible:false,
+        	},
+        	series: [{
+        		type: 'column',
+        		colorByPoint: true,
+        		data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6,         54.4],
+        		showInLegend: false
+        	}]
+        });		
+		}
+		drawdown();
+		function drawdown(){
+			var chart = Highcharts.chart('salesContainer', {
+        	     chart: {
+        		margin : [0, 0 , 0, 100]
+        	},
+        	title: {
+        		floating:true,
+        		text: ''
+        	},
+        	tooltip: {
+        		pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        	},
+        	plotOptions: {
+        		pie: {
+        			allowPointSelect: true,
+        			cursor: 'pointer',
+        			dataLabels: {
+        				enabled: false,
+        			},
+        		}
+        	},
+        	series: [{
+        		type: 'pie',
+        		innerSize: '60%',
+        		name: 'Sales',
+        		data: [
+			['Firefox',45.0],
+			['IE',26.8],
+			['Chrome',12.8],
+			['Safari',8.5],
+			['Opera',6.2],
+			['其他',0.7]
+		]
+	}]
+});
+
+		}
+
+	})
+</script>
+<style>
+	#home{
+		color: red;
+	}
+	.bg-white{
+		background-color: white;
+	}
+	.bg-green{
+		background-color: #66bb0d;
+	}
+	.bg-zi{
+		background-color: #7a30be;
+	}
+	.bg-blue{
+		background-color: #38b9ea;
+	}
+	.outerDiv{
+
+		width: 98%;
+		margin: 0 auto;
+	}
+	.totalDiv{
+		overflow: hidden;
+		padding: 10px;
+		border-radius: 5px;
+		margin-top:20px;
+	}
+	.totalDiv .iconDiv,.totalDiv .numDiv{
+		float: left;
+	}
+	.iconDiv{
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		text-align: center;
+		margin-top: 6px;
+	}
+	.iconDiv i{
+		line-height: 40px;
+		color: #fff;
+		font-size: 26px;
+	}
+	.totalDiv .numDiv{
+		margin-left: 20px;
+		color: black;
+	}
+	.numDiv small{
+		display: block;
+		color: #666;
+		font-size: 9px;
+
+	}
+	.numDiv span{
+		font-size: 24px;
+		font-weight: 700;
+
+	}
+	#visContainer{
+		height: 240px;
+		margin-top:20px;
+	}
+	.visDiv{
+		position: relative;
+	}
+	.visDiv .numDiv,.uptimeDiv .numDiv{
+		position: absolute;
+		top: 20px;
+		left: 20px;
+
+	}
+	.salesDiv .numDiv{
+		position: absolute;
+		top: 150px;
+		left: 20px;
+	}
+	.visDiv span{
+		color: #66bb0d;
+	}
+	.uptimeDiv,.salesDiv{
+		margin-top:20px;
+	}
+	#uptimeContainer,#salesContainer{
+		height: 110px;
+	}
+	.footer img{
+		width: 100%;
+		margin-top: 20px;
+		height: 520px;
+		
+	}
+	
+</style>
